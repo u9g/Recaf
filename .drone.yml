@@ -11,7 +11,7 @@ steps:
     volumes:
       - name: deps
         path: /root/.m2
-    commands:
+    commands
       - ./mvnw test -B
 
   - name: build
