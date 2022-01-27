@@ -6,7 +6,7 @@ on:
       - dev3
   pull_request:
     branches: 
-      - master
+      - dev3
 
 permissions:
   checks: write
