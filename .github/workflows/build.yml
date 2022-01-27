@@ -8,6 +8,10 @@ on:
     branches: 
       - master
 
+permissions:
+  checks: write
+  pull-requests: write
+
 jobs:
   build:
     strategy:
