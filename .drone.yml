@@ -1,18 +1,7 @@
 kind: pipeline
 name: build
 
-platform:
-  os: linux
-  arch: amd64\\\\\\\\\\\\\\\\\\\\\
 
-steps:
-  - name: build
-    image: amazoncorretto:11
-    volumes:
-      - name: deps
-        path: /root/.m2
-    commands:
-      - yum -y install git
       - ./gradlew --no-daemon --info build
 
   - name: release
