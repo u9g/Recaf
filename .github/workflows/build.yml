@@ -29,13 +29,13 @@ jobs:
       with:
         distribution: adopt-hotspot
         java-version: ${{ matrix.java-version }}
+    - run: ./gradlew --info build
     - name: Upload Test Results
       uses: actions/upload-artifact@v2.3.1
       if: always()
       with:
         name: artifacts
         path: "**/build/test-results/TEST-*.xml"
-    - run: ./gradlew --info build
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
       env:
