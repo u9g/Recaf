@@ -10,7 +10,7 @@ steps:
     image: amazoncorretto:8
     volumes:
       - name: deps
-        path: /root/.m2
+        path: /root/.m
     commands:
       - ./mvnw test -B
 
