@@ -60,3 +60,5 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1
         with:
           files: artifacts/**/*.xml
+          root_log_level: DEBUG
+          log_level: DEBUG
