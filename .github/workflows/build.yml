@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         java-version: [11, 17]
@@ -28,7 +29,6 @@ jobs:
       with:
         distribution: adopt-hotspot
         java-version: ${{ matrix.java-version }}
-        cache: gradle
     - run: ./gradlew --no-daemon --info build
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
