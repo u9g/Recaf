@@ -24,6 +24,7 @@ jobs:
       with:
         distribution: adopt-hotspot
         java-version: ${{ matrix.java-version }}
+    - run: ls -r .
     - run: ./gradlew --no-daemon --info build
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v2
