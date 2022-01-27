@@ -9,7 +9,7 @@ steps:
   - name: build
     image: amazoncorretto:11
     volumes:
-      - name: deps
+      - na
         path: /root/.m2
     commands:
       - yum -y install git
