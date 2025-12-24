@@ -4,24 +4,17 @@ import jakarta.annotation.Nonnull;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import javafx.scene.control.ContextMenu;
-import org.slf4j.Logger;
 import software.coley.collections.Unchecked;
-import software.coley.recaf.analytics.logging.Logging;
 import software.coley.recaf.info.ClassInfo;
 import software.coley.recaf.info.JvmClassInfo;
 import software.coley.recaf.info.member.MethodMember;
-import software.coley.recaf.path.ClassPathNode;
-import software.coley.recaf.path.IncompletePathException;
 import software.coley.recaf.path.PathNodes;
 import software.coley.recaf.services.cell.icon.IconProvider;
 import software.coley.recaf.services.cell.icon.IconProviderService;
 import software.coley.recaf.services.cell.text.TextProvider;
 import software.coley.recaf.services.cell.text.TextProviderService;
 import software.coley.recaf.services.navigation.Actions;
-import software.coley.recaf.services.search.match.StringPredicateProvider;
 import software.coley.recaf.ui.contextmenu.ContextMenuBuilder;
-import software.coley.recaf.ui.pane.search.MemberReferenceSearchPane;
-import software.coley.recaf.util.ClipboardUtil;
 import software.coley.recaf.workspace.model.Workspace;
 import software.coley.recaf.workspace.model.bundle.ClassBundle;
 import software.coley.recaf.workspace.model.bundle.JvmClassBundle;
@@ -38,7 +31,6 @@ import static org.kordamp.ikonli.carbonicons.CarbonIcons.*;
  */
 @ApplicationScoped
 public class BasicMethodContextMenuProviderFactory extends AbstractContextMenuProviderFactory implements MethodContextMenuProviderFactory {
-	private static final Logger logger = Logging.get(BasicMethodContextMenuProviderFactory.class);
 
 	@Inject
 	public BasicMethodContextMenuProviderFactory(@Nonnull TextProviderService textService,
@@ -58,51 +50,55 @@ public class BasicMethodContextMenuProviderFactory extends AbstractContextMenuPr
 		return () -> {
 			TextProvider nameProvider = textService.getMethodMemberTextProvider(workspace, resource, bundle, declaringClass, method);
 			IconProvider iconProvider = iconService.getClassMemberIconProvider(workspace, resource, bundle, declaringClass, method);
-			ContextMenu menu = new ContextMenu();
-			addHeader(menu, nameProvider.makeText(), iconProvider.makeIcon());
-			var builder = new ContextMenuBuilder(menu, source).forMember(workspace, resource, bundle, declaringClass, method);
 
-			if (source.isReference()) {
-				builder.item("menu.goto.method", ARROW_RIGHT, () -> {
-					ClassPathNode classPath = PathNodes.classPath(workspace, resource, bundle, declaringClass);
-					try {
-						actions.gotoDeclaration(classPath)
-								.requestFocus(method);
-					} catch (IncompletePathException ex) {
-						logger.error("Cannot go to method due to incomplete path", ex);
+			ContextMenu menu = createMemberContextMenu(
+					source, workspace, resource, bundle, declaringClass, method,
+					nameProvider, iconProvider,
+					"menu.goto.method",
+					"menu.search.method-references",
+					actions::renameMethod,
+					(edit, ws, res, bndl, declClass, member) -> {
+						MethodMember mtd = (MethodMember) member;
+						edit.item("menu.edit.assemble.method", EDIT, Unchecked.runnable(() ->
+								actions.openAssembler(PathNodes.memberPath(ws, res, bndl, declClass, mtd))));
+
+						if (declClass.isJvmClass()) {
+							JvmClassBundle jvmBundle = (JvmClassBundle) bndl;
+							JvmClassInfo declaringJvmClass = declClass.asJvmClass();
+
+							edit.item("menu.edit.copy", COPY_FILE, () ->
+									actions.copyMember(ws, res, jvmBundle, declaringJvmClass, mtd));
+							edit.item("menu.edit.removevars", CIRCLE_DASH, () ->
+									actions.removeMethodVariables(ws, res, jvmBundle, declaringJvmClass, List.of(mtd)));
+							// The conditions for optimally no-op'ing a constructor are a bit tricky, we'll just skip those for now.
+							if (!mtd.getName().equals("<init>"))
+								edit.item("menu.edit.noop", CIRCLE_DASH, () ->
+										actions.makeMethodsNoop(ws, res, jvmBundle, declaringJvmClass, List.of(mtd)));
+							edit.item("menu.edit.delete", TRASH_CAN, () ->
+									actions.deleteClassMethods(ws, res, jvmBundle, declaringJvmClass, List.of(mtd)));
+							edit.item("menu.edit.remove.annotation", CLOSE, () ->
+									actions.deleteMemberAnnotations(ws, res, jvmBundle, declaringJvmClass, mtd))
+									.disableWhen(mtd.getAnnotations().isEmpty());
+						}
+
+						// TODO: implement additional operations
+						//  - Edit
+						//    - Add annotation
 					}
-				});
-			} else {
-				// Edit menu
-				var edit = builder.submenu("menu.edit", EDIT);
-				edit.item("menu.edit.assemble.method", EDIT, Unchecked.runnable(() -> actions.openAssembler(PathNodes.memberPath(workspace, resource, bundle, declaringClass, method))));
-				if (declaringClass.isJvmClass()) {
-					JvmClassBundle jvmBundle = (JvmClassBundle) bundle;
-					JvmClassInfo declaringJvmClass = declaringClass.asJvmClass();
+			);
 
-					edit.item("menu.edit.copy", COPY_FILE, () -> actions.copyMember(workspace, resource, jvmBundle, declaringJvmClass, method));
-					edit.item("menu.edit.removevars", CIRCLE_DASH, () -> actions.removeMethodVariables(workspace, resource, jvmBundle, declaringJvmClass, List.of(method)));
-					if (!method.getName().equals("<init>")) // The conditions for optimally no-op'ing a constructor are a bit tricky, we'll just skip those for now.
-						edit.item("menu.edit.noop", CIRCLE_DASH, () -> actions.makeMethodsNoop(workspace, resource, jvmBundle, declaringJvmClass, List.of(method)));
-					edit.item("menu.edit.delete", TRASH_CAN, () -> actions.deleteClassMethods(workspace, resource, jvmBundle, declaringJvmClass, List.of(method)));
-					edit.item("menu.edit.remove.annotation", CLOSE, () -> actions.deleteMemberAnnotations(workspace, resource, jvmBundle, declaringJvmClass, method))
-							.disableWhen(method.getAnnotations().isEmpty());
-				}
-
-				// TODO: implement additional operations
-				//  - Edit
-				//    - Add annotation
-			}
-
+			// Additional method-specific menu items
 			// TODO: implement additional operations
 			//  - View
 			//    - Control flow graph
 			//    - Application flow graph
+			var builder = new ContextMenuBuilder(menu, source).forMember(workspace, resource, bundle, declaringClass, method);
 			var view = builder.submenu("menu.view", VIEW);
 			if (declaringClass.isJvmClass()) {
 				JvmClassBundle jvmBundle = (JvmClassBundle) bundle;
 				JvmClassInfo declaringJvmClass = declaringClass.asJvmClass();
-				view.item("menu.view.methodcallgraph", FLOW, () -> actions.openMethodCallGraph(workspace, resource, jvmBundle, declaringJvmClass, method));
+				view.item("menu.view.methodcallgraph", FLOW, () ->
+						actions.openMethodCallGraph(workspace, resource, jvmBundle, declaringJvmClass, method));
 			}
 
 			// TODO: implement additional operations
@@ -111,26 +107,6 @@ public class BasicMethodContextMenuProviderFactory extends AbstractContextMenuPr
 			//    - Optimize with pattern matchers
 			//    - Optimize with SSVM
 			//  - Simulate with SSVM (Virtualize > Run)
-
-			// Search actions
-			builder.item("menu.search.method-references", CODE_REFERENCE, () -> {
-				MemberReferenceSearchPane pane = actions.openNewMemberReferenceSearch();
-				pane.ownerPredicateIdProperty().setValue(StringPredicateProvider.KEY_EQUALS);
-				pane.namePredicateIdProperty().setValue(StringPredicateProvider.KEY_EQUALS);
-				pane.descPredicateIdProperty().setValue(StringPredicateProvider.KEY_EQUALS);
-				pane.ownerValueProperty().setValue(declaringClass.getName());
-				pane.nameValueProperty().setValue(method.getName());
-				pane.descValueProperty().setValue(method.getDescriptor());
-			});
-
-			// Copy path
-			builder.item("menu.tab.copypath", COPY_LINK, () -> ClipboardUtil.copyString(declaringClass, method));
-
-			// Documentation actions
-			builder.memberItem("menu.analysis.comment", ADD_COMMENT, actions::openCommentEditing);
-
-			// Refactor actions
-			builder.memberItem("menu.refactor.rename", TAG_EDIT, actions::renameMethod); // TODO: Hide when a library method (like System.exit)
 
 			return menu;
 		};
