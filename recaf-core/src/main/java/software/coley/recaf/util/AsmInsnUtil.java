@@ -216,7 +216,7 @@ public class AsmInsnUtil implements Opcodes {
 	public static void fixMissingVariableLabels(@Nonnull MethodNode method) {
 		// Must not be abstract
 		InsnList instructions = method.instructions;
-		if (instructions == null || instructions.size() == 0)
+		if (instructions == null || instructions.isEmpty())
 			return;
 
 		// Must have variables to fix
