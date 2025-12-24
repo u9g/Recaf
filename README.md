@@ -46,6 +46,28 @@ Recaf exposes almost all of its functionality through modular API's. Automating 
 
 To create your own script or plugin, see the [developer documentation](https://recaf.coley.software/dev/index.html), specifically the _"plugins & scripts"_ section.
 
+## Web Support
+
+Recaf now includes a web-based interface that provides remote access to bytecode analysis capabilities through a REST API and browser-based UI. This allows you to:
+
+- Access Recaf from any device with a web browser
+- Integrate Recaf functionality into other tools via REST API
+- View and analyze bytecode without running the full desktop application
+
+To start the web server:
+
+```bash
+# Build and run the web module
+./gradlew :recaf-web:run
+
+# Or run standalone
+java -jar recaf-web/build/libs/recaf-web-{VERSION}-all.jar
+```
+
+Then open your browser to `http://localhost:8080`
+
+For more details, see the [recaf-web module documentation](recaf-web/README.md).
+
 ## Command Line
 
 Recaf can run as a command line application, which can be especially useful when paired with scripts provided at startup. You can see all the current launch arguments by passing `--help` as an application argument.
