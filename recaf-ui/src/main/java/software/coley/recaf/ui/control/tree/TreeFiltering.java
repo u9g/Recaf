@@ -36,7 +36,7 @@ public class TreeFiltering {
 				// This should jump the navigation close to where the use intends
 				// to be instead of restarting selection/focus at the top of the tree.
 				TreeItem<?> item = tree.getRoot();
-				while (item.isExpanded() && item.getChildren().size() > 0) {
+				while (item.isExpanded() && !item.getChildren().isEmpty()) {
 					boolean matched = false;
 					for (TreeItem<?> child : item.getChildren()) {
 						if (child.isExpanded() || child.isLeaf()) {

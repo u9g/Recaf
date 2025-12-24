@@ -55,7 +55,7 @@ public class DeadCodeRemovingTransformer implements JvmClassTransformer {
 
 	public boolean prune(@Nonnull ClassNode node, @Nonnull MethodNode method) throws TransformationException {
 		InsnList instructions = method.instructions;
-		if (instructions == null || instructions.size() == 0)
+		if (instructions == null || instructions.isEmpty())
 			return false;
 
 		// Collect try blocks and the instructions within the start-end range (exclusive)

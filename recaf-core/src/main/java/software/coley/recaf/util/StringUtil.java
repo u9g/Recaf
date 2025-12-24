@@ -304,9 +304,11 @@ public class StringUtil {
 	@Nonnull
 	public static String insert(@Nonnull String text, int insertIndex, @Nullable String insertion) {
 		if (insertion == null || insertion.isEmpty() || insertIndex < 0 || insertIndex > text.length()) return text;
-		String pre = text.substring(0, insertIndex);
-		String post = text.substring(insertIndex);
-		return pre + insertion + post;
+		StringBuilder sb = new StringBuilder(text.length() + insertion.length());
+		sb.append(text, 0, insertIndex);
+		sb.append(insertion);
+		sb.append(text, insertIndex, text.length());
+		return sb.toString();
 	}
 
 	/**
@@ -322,9 +324,11 @@ public class StringUtil {
 	@Nonnull
 	public static String remove(@Nonnull String text, int removeIndex, int removeLength) {
 		if (removeIndex < 0 || removeIndex >= text.length()) return text;
-		String pre = text.substring(0, removeIndex);
-		String post = text.substring(Math.min(removeIndex + removeLength, text.length()));
-		return pre + post;
+		int endIndex = Math.min(removeIndex + removeLength, text.length());
+		StringBuilder sb = new StringBuilder(text.length() - (endIndex - removeIndex));
+		sb.append(text, 0, removeIndex);
+		sb.append(text, endIndex, text.length());
+		return sb.toString();
 	}
 
 	/**
@@ -412,10 +416,12 @@ public class StringUtil {
 	 */
 	@Nonnull
 	public static String replaceRange(@Nonnull String string, int start, int end, String replacement) {
-		String temp = string.substring(0, start);
-		temp += replacement;
-		temp += string.substring(end);
-		return temp;
+		int replacementLen = (replacement == null) ? 0 : replacement.length();
+		StringBuilder sb = new StringBuilder(string.length() - (end - start) + replacementLen);
+		sb.append(string, 0, start);
+		if (replacement != null) sb.append(replacement);
+		sb.append(string, end, string.length());
+		return sb.toString();
 	}
 
 	/**
