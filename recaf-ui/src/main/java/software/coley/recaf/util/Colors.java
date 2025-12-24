@@ -65,10 +65,10 @@ public class Colors {
 	 * @return ARGB of color.
 	 */
 	public static int argb(@Nonnull Color color) {
-		int a = (int) (color.getOpacity() * 255);
-		int r = (int) (color.getRed() * 255);
-		int g = (int) (color.getGreen() * 255);
-		int b = (int) (color.getBlue() * 255);
-		return a << 24 | r << 16 | g << 8 | b;
+		int alpha = (int) (color.getOpacity() * 255);
+		int red = (int) (color.getRed() * 255);
+		int green = (int) (color.getGreen() * 255);
+		int blue = (int) (color.getBlue() * 255);
+		return alpha << 24 | red << 16 | green << 8 | blue;
 	}
 }

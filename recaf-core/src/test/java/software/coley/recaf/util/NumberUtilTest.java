@@ -51,31 +51,31 @@ class NumberUtilTest {
 	}
 
 	@Test
-	void testCmp() {
+	void testCompare() {
 		// Int input
-		assertEquals(0, NumberUtil.cmp(0, 0));
-		assertEquals(1, NumberUtil.cmp(1, 0));
-		assertEquals(-1, NumberUtil.cmp(0, 1));
+		assertEquals(0, NumberUtil.compare(0, 0));
+		assertEquals(1, NumberUtil.compare(1, 0));
+		assertEquals(-1, NumberUtil.compare(0, 1));
 
 		// Long input
-		assertEquals(0, NumberUtil.cmp(0L, 0L));
-		assertEquals(1, NumberUtil.cmp(1L, 0L));
-		assertEquals(-1, NumberUtil.cmp(0L, 1L));
+		assertEquals(0, NumberUtil.compare(0L, 0L));
+		assertEquals(1, NumberUtil.compare(1L, 0L));
+		assertEquals(-1, NumberUtil.compare(0L, 1L));
 
 		// Double input
-		assertEquals(0, NumberUtil.cmp(0.0, 0.0));
-		assertEquals(1, NumberUtil.cmp(1.0, 0.0));
-		assertEquals(-1, NumberUtil.cmp(0.0, 1.0));
+		assertEquals(0, NumberUtil.compare(0.0, 0.0));
+		assertEquals(1, NumberUtil.compare(1.0, 0.0));
+		assertEquals(-1, NumberUtil.compare(0.0, 1.0));
 
 		// Float input
-		assertEquals(0, NumberUtil.cmp(0.0F, 0.0F));
-		assertEquals(1, NumberUtil.cmp(1.0F, 0.0F));
-		assertEquals(-1, NumberUtil.cmp(0.0F, 1.0F));
+		assertEquals(0, NumberUtil.compare(0.0F, 0.0F));
+		assertEquals(1, NumberUtil.compare(1.0F, 0.0F));
+		assertEquals(-1, NumberUtil.compare(0.0F, 1.0F));
 
 		// Mixed input
-		assertEquals(0, NumberUtil.cmp(0, 0.0F));
-		assertEquals(1, NumberUtil.cmp(1.0F, 0L));
-		assertEquals(-1, NumberUtil.cmp(0x0L, 1.0));
+		assertEquals(0, NumberUtil.compare(0, 0.0F));
+		assertEquals(1, NumberUtil.compare(1.0F, 0L));
+		assertEquals(-1, NumberUtil.compare(0x0L, 1.0));
 	}
 
 	@Test

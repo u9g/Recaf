@@ -63,21 +63,21 @@ public class StringUtil {
 	/**
 	 * @param input
 	 * 		Some text to search.
-	 * @param c
+	 * @param character
 	 * 		Char to get index of in the input string.
 	 *
 	 * @return Array of indices in the input string where the char exists.
 	 */
-	public static int[] indicesOf(@Nonnull String input, char c) {
+	public static int[] indicesOf(@Nonnull String input, char character) {
 		IntList list = new IntArrayList(5);
-		int i = -1;
+		int index = -1;
 		do {
-			i = input.indexOf(c, i);
-			if (i >= 0) {
-				list.add(i);
-				i++;
+			index = input.indexOf(character, index);
+			if (index >= 0) {
+				list.add(index);
+				index++;
 			}
-		} while (i >= 0);
+		} while (index >= 0);
 		return list.toArray(EMPTY_INT_ARRAY);
 	}
 
@@ -96,12 +96,12 @@ public class StringUtil {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> words = new ArrayList<>(input.length() / 5);
 		char[] strArray = input.toCharArray();
-		for (char c : strArray) {
-			if (c == split) {
+		for (char currentChar : strArray) {
+			if (currentChar == split) {
 				if ((includeEmpty || !sb.isEmpty())) words.add(sb.toString());
 				sb.setLength(0);
 			} else {
-				sb.append(c);
+				sb.append(currentChar);
 			}
 		}
 		if ((includeEmpty || !sb.isEmpty())) words.add(sb.toString());
@@ -119,12 +119,12 @@ public class StringUtil {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> words = new ArrayList<>(input.length() / 5);
 		char[] strArray = input.toCharArray();
-		for (char c : strArray) {
-			if (!Character.isJavaIdentifierPart(c)) {
+		for (char currentChar : strArray) {
+			if (!Character.isJavaIdentifierPart(currentChar)) {
 				if (!sb.isEmpty()) words.add(sb.toString());
 				sb.setLength(0);
 			} else {
-				sb.append(c);
+				sb.append(currentChar);
 			}
 		}
 		if (!sb.isEmpty()) words.add(sb.toString());
@@ -184,9 +184,9 @@ public class StringUtil {
 	 */
 	@Nonnull
 	public static String cutOffAtFirst(@Nonnull String text, char cutoff) {
-		int i = text.indexOf(cutoff);
-		if (i < 0) return text;
-		return text.substring(0, i);
+		int cutoffIndex = text.indexOf(cutoff);
+		if (cutoffIndex < 0) return text;
+		return text.substring(0, cutoffIndex);
 	}
 
 	/**
@@ -199,9 +199,9 @@ public class StringUtil {
 	 */
 	@Nonnull
 	public static String cutOffAtFirst(@Nonnull String text, @Nonnull String cutoff) {
-		int i = text.indexOf(cutoff);
-		if (i < 0) return text;
-		return text.substring(0, i);
+		int cutoffIndex = text.indexOf(cutoff);
+		if (cutoffIndex < 0) return text;
+		return text.substring(0, cutoffIndex);
 	}
 
 	/**
@@ -214,9 +214,9 @@ public class StringUtil {
 	 */
 	@Nonnull
 	public static String cutOffAtLast(@Nonnull String text, char cutoff) {
-		int i = text.lastIndexOf(cutoff);
-		if (i < 0) return text;
-		return text.substring(0, i);
+		int cutoffIndex = text.lastIndexOf(cutoff);
+		if (cutoffIndex < 0) return text;
+		return text.substring(0, cutoffIndex);
 	}
 
 	/**
@@ -229,9 +229,9 @@ public class StringUtil {
 	 */
 	@Nonnull
 	public static String cutOffAtLast(@Nonnull String text, @Nonnull String cutoff) {
-		int i = text.lastIndexOf(cutoff);
-		if (i < 0) return text;
-		return text.substring(0, i);
+		int cutoffIndex = text.lastIndexOf(cutoff);
+		if (cutoffIndex < 0) return text;
+		return text.substring(0, cutoffIndex);
 	}
 
 	/**
@@ -246,13 +246,13 @@ public class StringUtil {
 	 */
 	@Nonnull
 	public static String cutOffAtNth(@Nonnull String text, char cutoff, int n) {
-		int i = -1;
+		int cutoffIndex = -1;
 		while (n-- > 0) {
-			if ((i = text.indexOf(cutoff, i + 1)) < 0)
+			if ((cutoffIndex = text.indexOf(cutoff, cutoffIndex + 1)) < 0)
 				return text;
 		}
-		if (i < 0) return text;
-		return text.substring(0, i);
+		if (cutoffIndex < 0) return text;
+		return text.substring(0, cutoffIndex);
 	}
 
 	/**
@@ -267,13 +267,13 @@ public class StringUtil {
 	 */
 	@Nonnull
 	public static String cutOffAtNth(@Nonnull String text, String cutoff, int n) {
-		int i = -1;
+		int cutoffIndex = -1;
 		while (n-- > 0) {
-			if ((i = text.indexOf(cutoff, i + 1)) < 0)
+			if ((cutoffIndex = text.indexOf(cutoff, cutoffIndex + 1)) < 0)
 				return text;
 		}
-		if (i < 0) return text;
-		return text.substring(0, i);
+		if (cutoffIndex < 0) return text;
+		return text.substring(0, cutoffIndex);
 	}
 
 	/**
@@ -286,9 +286,9 @@ public class StringUtil {
 	 */
 	@Nonnull
 	public static String getAfter(@Nonnull String text, @Nonnull String after) {
-		int i = text.lastIndexOf(after);
-		if (i < 0) return text;
-		return text.substring(i + after.length());
+		int afterIndex = text.lastIndexOf(after);
+		if (afterIndex < 0) return text;
+		return text.substring(afterIndex + after.length());
 	}
 
 	/**
@@ -373,9 +373,9 @@ public class StringUtil {
 	 */
 	@Nonnull
 	public static String replaceLast(@Nonnull String string, @Nonnull String toReplace, @Nonnull String replacement) {
-		int i = string.lastIndexOf(toReplace);
-		if (i > -1)
-			return string.substring(0, i) + replacement + string.substring(i + toReplace.length());
+		int replaceIndex = string.lastIndexOf(toReplace);
+		if (replaceIndex > -1)
+			return string.substring(0, replaceIndex) + replacement + string.substring(replaceIndex + toReplace.length());
 		return string;
 	}
 
@@ -469,8 +469,8 @@ public class StringUtil {
 			return 0;
 		int count = 0;
 		int length = text.length();
-		for (int i = 0; i < length; i++) {
-			if (text.charAt(i) == pattern) count++;
+		for (int index = 0; index < length; index++) {
+			if (text.charAt(index) == pattern) count++;
 		}
 		return count;
 	}
@@ -609,52 +609,52 @@ public class StringUtil {
 	}
 
 	/**
-	 * @param a
+	 * @param firstString
 	 * 		Some string.
-	 * @param b
+	 * @param secondString
 	 * 		Another.
 	 *
 	 * @return The common prefix between the two strings.
 	 */
 	@Nonnull
-	public static String getCommonPrefix(@Nonnull String a, @Nonnull String b) {
-		int len = Math.min(a.length(), b.length());
-		for (int i = 0; i < len; i++) {
-			if (a.charAt(i) != b.charAt(i)) {
-				return a.substring(0, i);
+	public static String getCommonPrefix(@Nonnull String firstString, @Nonnull String secondString) {
+		int minLength = Math.min(firstString.length(), secondString.length());
+		for (int index = 0; index < minLength; index++) {
+			if (firstString.charAt(index) != secondString.charAt(index)) {
+				return firstString.substring(0, index);
 			}
 		}
-		return a.substring(0, len);
+		return firstString.substring(0, minLength);
 	}
 
 	/**
-	 * @param a
+	 * @param firstString
 	 * 		Some string.
-	 * @param b
+	 * @param secondString
 	 * 		Another.
 	 *
 	 * @return The common suffix between the two strings.
 	 */
 	@Nonnull
-	public static String getCommonSuffix(@Nonnull String a, @Nonnull String b) {
-		int alen = a.length();
-		int blen = b.length();
-		int commonLength = Math.min(alen, blen);
+	public static String getCommonSuffix(@Nonnull String firstString, @Nonnull String secondString) {
+		int firstLength = firstString.length();
+		int secondLength = secondString.length();
+		int commonLength = Math.min(firstLength, secondLength);
 
 		// Base case where one string is empty.
 		if (commonLength == 0)
 			return "";
 
 		// Find fist non-equal char and get the suffix string.
-		for (int i = 1; i < commonLength + 1; i++) {
-			if (a.charAt(alen - i) != b.charAt(blen - i)) {
-				return a.substring(alen - i + 1);
+		for (int index = 1; index < commonLength + 1; index++) {
+			if (firstString.charAt(firstLength - index) != secondString.charAt(secondLength - index)) {
+				return firstString.substring(firstLength - index + 1);
 			}
 		}
 
 		// For the shared common length both strings are equal.
 		// Yield the shorter string.
-		return alen < blen ? a : b;
+		return firstLength < secondLength ? firstString : secondString;
 	}
 
 	/**
@@ -714,8 +714,8 @@ public class StringUtil {
 	public static int getWhitespacePrefixLength(@Nonnull String text, int tabWidth) {
 		char[] chars = text.toCharArray();
 		int offset = 0;
-		for (char c : chars) {
-			if (c == ' ' || c == '\t') offset++;
+		for (char currentChar : chars) {
+			if (currentChar == ' ' || currentChar == '\t') offset++;
 			else break;
 		}
 		return getTabAdjustedLength(text.substring(0, offset), tabWidth);
@@ -773,10 +773,10 @@ public class StringUtil {
 
 		// Add a trailing '\n' so we cleanup wrapping logic for the last line in the text.
 		char[] chars = (text + '\n').toCharArray();
-		for (char c : chars) {
-			if (Character.isWhitespace(c)) {
+		for (char currentChar : chars) {
+			if (Character.isWhitespace(currentChar)) {
 				// Skip this, we only operate on newlines.
-				if (c == '\r') continue;
+				if (currentChar == '\r') continue;
 
 				// Append word
 				if (!word.isEmpty()) {
@@ -791,7 +791,7 @@ public class StringUtil {
 				}
 
 				// Edge case handling for newlines
-				if (c == '\n') {
+				if (currentChar == '\n') {
 					if (line.isEmpty()) {
 						sb.append('\n');
 					} else {
@@ -806,10 +806,10 @@ public class StringUtil {
 					sb.append(line.toString().trim()).append('\n');
 					line.setLength(0);
 				} else {
-					line.append(c);
+					line.append(currentChar);
 				}
 			} else {
-				word.append(c);
+				word.append(currentChar);
 			}
 		}
 		return sb.toString().trim();
@@ -936,8 +936,8 @@ public class StringUtil {
 		final char[] array = new char[length];
 		int offset = length - 1;
 		while (index > charz.length - 1) {
-			int k = Math.abs(-(index % alphabetLength));
-			array[offset--] = charz[k];
+			int charIndex = Math.abs(-(index % alphabetLength));
+			array[offset--] = charz[charIndex];
 			index /= alphabetLength;
 			index -= 1;
 		}
@@ -1110,12 +1110,12 @@ public class StringUtil {
 				// Check each character
 				int textChars = 0;
 				int arrayEnd = charBuf.position();
-				for (int i = 0; i < arrayEnd; i++) {
-					char c = charArray[i];
-					int type = Character.getType(c);
+				for (int charIndex = 0; charIndex < arrayEnd; charIndex++) {
+					char currentChar = charArray[charIndex];
+					int type = Character.getType(currentChar);
 					boolean isTextChar = switch (type) {
-						case Character.CONTROL -> (c == '\n' || c == '\r');
-						case Character.FORMAT -> EscapeUtil.isWhitespaceChar(c);
+						case Character.CONTROL -> (currentChar == '\n' || currentChar == '\r');
+						case Character.FORMAT -> EscapeUtil.isWhitespaceChar(currentChar);
 						case Character.PRIVATE_USE, Character.SURROGATE, Character.UNASSIGNED -> false;
 						default -> true;
 					};
