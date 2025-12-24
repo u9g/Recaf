@@ -1,0 +1,23 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':recaf-core')
+    testImplementation(testFixtures(project(":recaf-core")))
+
+    // Javalin for lightweight REST API
+    implementation 'io.javalin:javalin:6.3.0'
+    
+    // SLF4J is already included via recaf-core
+    // Javalin uses SLF4J for logging
+    
+    // JSON serialization (Gson is already in recaf-core)
+    
+    // WebSocket support for real-time updates (optional)
+    implementation 'org.eclipse.jetty.websocket:websocket-jetty-server:11.0.24'
+}
+
+application {
+    mainClass = 'software.coley.recaf.web.WebServer'
+}
