@@ -42,6 +42,7 @@ import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Summarizer that shows jar signature information, with the option to remove it in a single click.
@@ -51,6 +52,7 @@ import java.util.List;
 @ApplicationScoped
 public class JarSigningSummarizer implements ResourceSummarizer {
 	private static final String MANIFEST_PATCH_PATTERN = "Name: [\\S\\s]+?[\\w-]+-Digest: .+\\s+?";
+	private static final Pattern SIGNATURE_FILE_PATTERN = Pattern.compile("META-INF/[\\w-]+\\.(?:SF|RSA|DSA)");
 	private static final CertificateFactory CERTIFICATE_FACTORY;
 
 	static {
@@ -84,7 +86,7 @@ public class JarSigningSummarizer implements ResourceSummarizer {
 		List<FileInfo> rsaFiles = new ArrayList<>();
 		for (FileInfo file : bundle) {
 			String name = file.getName();
-			if (name.matches("META-INF/[\\w-]+\\.(?:SF|RSA|DSA)")) {
+			if (SIGNATURE_FILE_PATTERN.matcher(name).matches()) {
 				if (name.endsWith(".SF")) {
 					sfFiles.add(file);
 				} else {

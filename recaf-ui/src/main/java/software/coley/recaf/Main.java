@@ -39,6 +39,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -50,6 +51,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class Main {
 	private static final Logger logger = Logging.get(Main.class);
+	private static final Pattern LOG_FILE_PATTERN = Pattern.compile("log-\\d+-\\d+-\\d+\\.txt");
 	private static LaunchArguments launchArgs;
 	private static Recaf recaf;
 
@@ -201,7 +203,7 @@ public class Main {
 		try {
 			Files.createDirectories(directories.getLogsDirectory());
 			List<Path> oldLogs = Files.list(directories.getBaseDirectory())
-					.filter(p -> p.getFileName().toString().matches("log-\\d+-\\d+-\\d+\\.txt"))
+					.filter(p -> LOG_FILE_PATTERN.matcher(p.getFileName().toString()).matches())
 					.collect(Collectors.toList());
 
 			// Do not treat the current log file as an old log file
