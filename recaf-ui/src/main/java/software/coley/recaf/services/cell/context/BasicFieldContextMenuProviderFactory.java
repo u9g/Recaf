@@ -58,8 +58,8 @@ public class BasicFieldContextMenuProviderFactory extends AbstractContextMenuPro
 					actions::renameField,
 					(edit, ws, res, bndl, declClass, member) -> {
 						FieldMember fld = (FieldMember) member;
-						edit.item("menu.edit.assemble.field", EDIT, () -> Unchecked.runnable(() ->
-								actions.openAssembler(PathNodes.memberPath(ws, res, bndl, declClass, fld))).run());
+						edit.item("menu.edit.assemble.field", EDIT, Unchecked.runnable(() ->
+								actions.openAssembler(PathNodes.memberPath(ws, res, bndl, declClass, fld))));
 
 						if (declClass.isJvmClass()) {
 							JvmClassBundle jvmBundle = (JvmClassBundle) bndl;
