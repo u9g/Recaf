@@ -116,14 +116,14 @@ public class NumberUtil {
 	/**
 	 * Compare two numeric values, regardless of their type.
 	 *
-	 * @param right
-	 * 		First value.
 	 * @param left
+	 * 		First value.
+	 * @param right
 	 * 		Second value.
 	 *
 	 * @return Comparison of {@code X.compare(left, right)}
 	 */
-	public static int cmp(@Nonnull Number left, @Nonnull Number right) {
+	public static int compare(@Nonnull Number left, @Nonnull Number right) {
 		// Check for widest types first, go down the type list to narrower types until reaching int.
 		if (right instanceof Double || left instanceof Double) {
 			return Double.compare(left.doubleValue(), right.doubleValue());
@@ -452,14 +452,14 @@ public class NumberUtil {
 	}
 
 	/**
-	 * @param a
+	 * @param firstValue
 	 * 		Some value.
-	 * @param b
+	 * @param secondValue
 	 * 		Another value.
 	 *
 	 * @return {@code true} when they have the same sign.
 	 */
-	public static boolean haveSameSign(int a, int b) {
-		return a * b > 0;
+	public static boolean haveSameSign(int firstValue, int secondValue) {
+		return firstValue * secondValue > 0;
 	}
 }
