@@ -2,6 +2,7 @@ rootProject.name = 'Recaf'
 
 include 'recaf-core'
 include 'recaf-ui'
+include 'recaf-web'
 
 buildCache {
     local {
